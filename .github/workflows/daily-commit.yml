@@ -1,0 +1,28 @@
+name: Daily Contribution Bot
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs daily at 12:00 UTC (19:00 WIB)
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update Contribution Log
+        run: |
+          echo "Automated daily commit on $(date)" >> contributions.txt
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "Libra2694"
+          git config --global user.email "151332096+Libra2694@users.noreply.github.com"
+          git add contributions.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: automated daily contribution update"
+          git push origin main
